@@ -1,4 +1,4 @@
-Pipelines{
+Pipeline{
     agent any
     stages{
         stage("Quality Gate Status Check"){
