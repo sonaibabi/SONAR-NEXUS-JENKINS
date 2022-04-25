@@ -1,11 +1,21 @@
 pipeline{
     agent any
-    stages{
-        stage("Git Checkout"){
+        stage("Sonar Qube Analysis"){
             steps{
-                git credentialsId: 'GitPass', url: 'https://github.com/sonaibabi/SONAR-NEXUS-JENKINS.git'
+                withSonarQubeEnv('sonarserver'){
+                    sh 'mvn clean sonar:sonar'
+                }
+                
             }
-            
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+                }
+            }
         }
     }
 }
